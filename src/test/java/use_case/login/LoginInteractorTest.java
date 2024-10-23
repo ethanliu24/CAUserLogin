@@ -11,9 +11,36 @@ import java.time.LocalDateTime;
 import static org.junit.Assert.*;
 
 public class LoginInteractorTest {
+    @Test
+    public void successUserLoggedInTest() {
+        LoginInputData inputData = new LoginInputData("Paul", "password");
+        LoginUserDataAccessInterface userRepository = new InMemoryUserDataAccessObject();
 
-    // TODO Task 2.2: make a copy of this test method and follow the instructions in the readme to test your
-    //                code from Task 2.1..
+        // For the success test, we need to add Paul to the data access repository before we log in.
+        UserFactory factory = new CommonUserFactory();
+        User user = factory.create("Paul", "password");
+        userRepository.save(user);
+
+        // This creates a successPresenter that tests whether the test case is as we expect.
+        LoginOutputBoundary successPresenter = new LoginOutputBoundary() {
+            @Override
+            public void prepareSuccessView(LoginOutputData user) {
+                userRepository.setCurrentUser(user.getUsername());
+                assertEquals("Paul", userRepository.getCurrentUser());
+            }
+
+            @Override
+            public void prepareFailView(String error) {
+                fail("Use case failure is unexpected.");
+            }
+        };
+
+        assertNull(userRepository.getCurrentUser());
+        LoginInputBoundary interactor = new LoginInteractor(userRepository, successPresenter);
+        interactor.execute(inputData);
+    }
+
+
     @Test
     public void successTest() {
         LoginInputData inputData = new LoginInputData("Paul", "password");
