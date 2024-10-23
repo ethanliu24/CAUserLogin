@@ -6,8 +6,6 @@ import entity.User;
 import entity.UserFactory;
 import org.junit.Test;
 
-import java.time.LocalDateTime;
-
 import static org.junit.Assert.*;
 
 public class LoginInteractorTest {
@@ -25,7 +23,6 @@ public class LoginInteractorTest {
         LoginOutputBoundary successPresenter = new LoginOutputBoundary() {
             @Override
             public void prepareSuccessView(LoginOutputData user) {
-                userRepository.setCurrentUser(user.getUsername());
                 assertEquals("Paul", userRepository.getCurrentUser());
             }
 
